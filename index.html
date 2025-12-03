@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>30-денний Челендж Трекер</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #a8c5f5 0%, #d4a5f7 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .container {
+            background: white;
+            border-radius: 30px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            background: linear-gradient(135deg, #6b9ff5 0%, #b99df7 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #7db3f5 0%, #c4a8f7 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 2.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .progress-section {
+            margin-bottom: 30px;
+        }
+
+        .progress-bar-container {
+            background: #e8f2ff;
+            height: 30px;
+            border-radius: 15px;
+            overflow: hidden;
+            margin-bottom: 10px;
+            position: relative;
+        }
+
+        .progress-bar {
+            background: linear-gradient(90deg, #7db3f5 0%, #c4a8f7 100%);
+            height: 100%;
+            border-radius: 15px;
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .motivation {
+            background: linear-gradient(135deg, #e8f2ff 0%, #f5edff 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .motivation-icon {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .motivation-text {
+            color: #6b9ff5;
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        /* Секція ачівок */
+        .achievements {
+            margin-bottom: 30px;
+        }
+
+        .achievements-title {
+            text-align: center;
+            color: #6b9ff5;
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .achievements-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+        }
+
+        .achievement {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .achievement.unlocked {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            border-color: #f59e0b;
+            transform: scale(1.05);
+            animation: unlock 0.6s ease;
+        }
+
+        @keyframes unlock {
+            0% { transform: scale(0.8) rotate(-10deg); opacity: 0; }
+            50% { transform: scale(1.15) rotate(5deg); }
+            100% { transform: scale(1.05) rotate(0deg); opacity: 1; }
+        }
+
+        .achievement-icon {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            filter: grayscale(100%);
+            opacity: 0.3;
+        }
+
+        .achievement.unlocked .achievement-icon {
+            filter: grayscale(0%);
+            opacity: 1;
+            animation: bounce 0.6s ease;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .achievement-name {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: #6b7280;
+            margin-bottom: 5px;
+        }
+
+        .achievement.unlocked .achievement-name {
+            color: white;
+        }
+
+        .achievement-desc {
+            font-size: 0.75rem;
+            color: #9ca3af;
+        }
+
+        .achievement.unlocked .achievement-desc {
+            color: rgba(255, 255, 255, 0.9);
+        }
+
+        .calendar {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .day {
+            aspect-ratio: 1;
+            border: 2px solid #d4e4ff;
+            border-radius: 12px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+            position: relative;
+        }
+
+        .day:hover {
+            border-color: #7db3f5;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(125, 179, 245, 0.3);
+        }
+
+        .day.completed {
+            background: linear-gradient(135deg, #7db3f5 0%, #c4a8f7 100%);
+            border-color: #7db3f5;
+            color: white;
+            animation: checkIn 0.4s ease;
+        }
+
+        @keyframes checkIn {
+            0% { transform: scale(0.8); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .day-number {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .checkmark {
+            font-size: 1.5rem;
+            display: none;
+        }
+
+        .day.completed .checkmark {
+            display: block;
+        }
+
+        .day.completed .day-number {
+            font-size: 0.9rem;
+        }
+
+        .controls {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 30px;
+            border: none;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #7db3f5 0%, #c4a8f7 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(125, 179, 245, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e8f2ff;
+            color: #6b9ff5;
+        }
+
+        .btn-secondary:hover {
+            background: #d4e4ff;
+        }
+
+        /* Модальне вікно для ачівки */
+        .achievement-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .achievement-modal.show {
+            display: flex;
+        }
+
+        .achievement-modal-content {
+            background: white;
+            padding: 40px;
+            border-radius: 30px;
+            text-align: center;
+            max-width: 400px;
+            animation: slideUp 0.5s ease;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        @keyframes slideUp {
+            from { 
+                transform: translateY(50px);
+                opacity: 0;
+            }
+            to { 
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .achievement-modal-icon {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            animation: rotate 1s ease;
+        }
+
+        @keyframes rotate {
+            0% { transform: rotate(0deg) scale(0); }
+            50% { transform: rotate(180deg) scale(1.2); }
+            100% { transform: rotate(360deg) scale(1); }
+        }
+
+        .achievement-modal-title {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .achievement-modal-desc {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+        }
+
+        .achievement-modal-btn {
+            background: linear-gradient(135deg, #7db3f5 0%, #c4a8f7 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 25px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .achievement-modal-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(125, 179, 245, 0.4);
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 1.8rem;
+            }
+
+            .calendar {
+                gap: 5px;
+            }
+
+            .stat-number {
+                font-size: 2rem;
+            }
+
+            .achievements-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .achievement-modal-content {
+                margin: 20px;
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎯 30-ДЕННИЙ ЧЕЛЕНДЖ</h1>
+            <p>По 1 відео кожен день протягом місяця</p>
+        </div>
+
+        <div class="stats">
+            <div class="stat-card">
+                <div class="stat-number" id="completedDays">0</div>
+                <div class="stat-label">Відео опубліковано</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="streakDays">0</div>
+                <div class="stat-label">Streak 🔥</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number" id="remainingDays">30</div>
+                <div class="stat-label">Залишилось днів</div>
+            </div>
+        </div>
+
+        <div class="progress-section">
+            <div class="progress-bar-container">
+                <div class="progress-bar" id="progressBar">0%</div>
+            </div>
+        </div>
+
+        <div class="motivation" id="motivation">
+            <div class="motivation-icon">🚀</div>
+            <div class="motivation-text">Натисни на день, щоб відзначити виконання!</div>
+        </div>
+
+        <!-- Секція ачівок -->
+        <div class="achievements">
+            <div class="achievements-title">🏆 Досягнення</div>
+            <div class="achievements-grid">
+                <div class="achievement" id="achievement-10">
+                    <div class="achievement-icon">🥉</div>
+                    <div class="achievement-name">Новачок</div>
+                    <div class="achievement-desc">10 відео</div>
+                </div>
+                <div class="achievement" id="achievement-20">
+                    <div class="achievement-icon">🥈</div>
+                    <div class="achievement-name">Майстер</div>
+                    <div class="achievement-desc">20 відео</div>
+                </div>
+                <div class="achievement" id="achievement-30">
+                    <div class="achievement-icon">🥇</div>
+                    <div class="achievement-name">Легенда</div>
+                    <div class="achievement-desc">30 відео</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="calendar" id="calendar"></div>
+
+        <div class="controls">
+            <button class="btn btn-primary" onclick="markToday()">Відзначити сьогодні ✓</button>
+            <button class="btn btn-secondary" onclick="resetChallenge()">Почати заново</button>
+        </div>
+    </div>
+
+    <!-- Модальне вікно для ачівки -->
+    <div class="achievement-modal" id="achievementModal">
+        <div class="achievement-modal-content">
+            <div class="achievement-modal-icon" id="modalIcon">🏆</div>
+            <div class="achievement-modal-title" id="modalTitle">ДОСЯГНЕННЯ РОЗБЛОКОВАНО!</div>
+            <div class="achievement-modal-desc" id="modalDesc">Ти отримав нову ачівку!</div>
+            <button class="achievement-modal-btn" onclick="closeAchievementModal()">Продовжити! 🚀</button>
+        </div>
+    </div>
+
+    <script>
+        let completedDays = new Set();
+        let unlockedAchievements = new Set();
+        const totalDays = 30;
+        const STORAGE_KEY = 'challenge_progress';
+        const ACHIEVEMENTS_KEY = 'unlocked_achievements';
+
+        // Ачівки
+        const achievements = {
+            10: { icon: '🥉', name: 'Новачок', desc: 'Опубліковано 10 відео!', message: 'Ти досяг позначки в 10 відео! Так тримати!' },
+            20: { icon: '🥈', name: 'Майстер', desc: 'Опубліковано 20 відео!', message: 'Неймовірно! 20 відео - це серйозне досягнення!' },
+            30: { icon: '🥇', name: 'Легенда', desc: 'Пройдено повний челендж!', message: 'ТИ ЛЕГЕНДА! 30 днів виконання - це круто! 🎊' }
+        };
+
+        // Мотиваційні повідомлення залежно від прогресу
+        const motivationalMessages = {
+            0: { icon: '🚀', text: 'Натисни на день, щоб відзначити виконання!' },
+            1: { icon: '🎉', text: 'Чудовий старт! Перше відео зроблено!' },
+            3: { icon: '💪', text: 'Три дні поспіль! Ти вже формуєш звичку!' },
+            7: { icon: '🔥', text: 'Тиждень виконання! Ти на правильному шляху!' },
+            10: { icon: '⭐', text: 'Перша третина позаду! Отримано ачівку! 🥉' },
+            14: { icon: '🎯', text: 'Половина шляху пройдено! Ти неймовірний!' },
+            20: { icon: '🏆', text: 'Дві третини виконано! Отримано ачівку! 🥈' },
+            25: { icon: '👑', text: 'Залишилось лише 5 днів! Ти майже легенда!' },
+            30: { icon: '🎊', text: 'ВІТАЄМО! Ти завершив 30-денний челендж! 🥇' }
+        };
+
+        // Завантаження прогресу з localStorage
+        function loadProgress() {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            const savedAchievements = localStorage.getItem(ACHIEVEMENTS_KEY);
+            
+            if (saved) {
+                try {
+                    completedDays = new Set(JSON.parse(saved));
+                } catch (e) {
+                    console.error('Error loading progress:', e);
+                }
+            }
+
+            if (savedAchievements) {
+                try {
+                    unlockedAchievements = new Set(JSON.parse(savedAchievements));
+                } catch (e) {
+                    console.error('Error loading achievements:', e);
+                }
+            }
+        }
+
+        // Збереження прогресу в localStorage
+        function saveProgress() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify([...completedDays]));
+            localStorage.setItem(ACHIEVEMENTS_KEY, JSON.stringify([...unlockedAchievements]));
+        }
+
+        function initCalendar() {
+            const calendar = document.getElementById('calendar');
+            calendar.innerHTML = '';
+            
+            for (let i = 1; i <= totalDays; i++) {
+                const day = document.createElement('div');
+                day.className = 'day';
+                if (completedDays.has(i)) {
+                    day.classList.add('completed');
+                }
+                
+                day.innerHTML = `
+                    <span class="day-number">День ${i}</span>
+                    <span class="checkmark">✓</span>
+                `;
+                
+                day.onclick = () => toggleDay(i);
+                calendar.appendChild(day);
+            }
+            
+            updateStats();
+            updateAchievements();
+        }
+
+        function toggleDay(dayNumber) {
+            const wasCompleted = completedDays.has(dayNumber);
+            
+            if (wasCompleted) {
+                completedDays.delete(dayNumber);
+            } else {
+                completedDays.add(dayNumber);
+            }
+            
+            saveProgress();
+            initCalendar();
+            
+            // Перевірка нових ачівок тільки при додаванні
+            if (!wasCompleted) {
+                checkNewAchievements();
+            }
+        }
+
+        function markToday() {
+            // Знаходимо перший невідзначений день
+            for (let i = 1; i <= totalDays; i++) {
+                if (!completedDays.has(i)) {
+                    completedDays.add(i);
+                    saveProgress();
+                    initCalendar();
+                    checkNewAchievements();
+                    break;
+                }
+            }
+        }
+
+        function checkNewAchievements() {
+            const completed = completedDays.size;
+            
+            // Перевіряємо кожні 10 відео
+            [10, 20, 30].forEach(milestone => {
+                if (completed >= milestone && !unlockedAchievements.has(milestone)) {
+                    unlockAchievement(milestone);
+                }
+            });
+        }
+
+        function unlockAchievement(milestone) {
+            unlockedAchievements.add(milestone);
+            saveProgress();
+            
+            const achievement = achievements[milestone];
+            showAchievementModal(achievement.icon, achievement.name, achievement.message);
+            
+            // Оновлюємо відображення ачівки
+            updateAchievements();
+        }
+
+        function updateAchievements() {
+            [10, 20, 30].forEach(milestone => {
+                const element = document.getElementById(`achievement-${milestone}`);
+                if (unlockedAchievements.has(milestone)) {
+                    element.classList.add('unlocked');
+                } else {
+                    element.classList.remove('unlocked');
+                }
+            });
+        }
+
+        function showAchievementModal(icon, name, message) {
+            const modal = document.getElementById('achievementModal');
+            document.getElementById('modalIcon').textContent = icon;
+            document.getElementById('modalTitle').textContent = name.toUpperCase();
+            document.getElementById('modalDesc').textContent = message;
+            
+            modal.classList.add('show');
+            
+            // Автоматично закрити через 5 секунд
+            setTimeout(() => {
+                if (modal.classList.contains('show')) {
+                    closeAchievementModal();
+                }
+            }, 5000);
+        }
+
+        function closeAchievementModal() {
+            document.getElementById('achievementModal').classList.remove('show');
+        }
+
+        function calculateStreak() {
+            if (completedDays.size === 0) return 0;
+            
+            const sortedDays = Array.from(completedDays).sort((a, b) => a - b);
+            let currentStreak = 1;
+            let maxStreak = 1;
+            
+            for (let i = 1; i < sortedDays.length; i++) {
+                if (sortedDays[i] === sortedDays[i-1] + 1) {
+                    currentStreak++;
+                    maxStreak = Math.max(maxStreak, currentStreak);
+                } else {
+                    currentStreak = 1;
+                }
+            }
+            
+            return maxStreak;
+        }
+
+        function updateStats() {
+            const completed = completedDays.size;
+            const remaining = totalDays - completed;
+            const percentage = Math.round((completed / totalDays) * 100);
+            const streak = calculateStreak();
+            
+            document.getElementById('completedDays').textContent = completed;
+            document.getElementById('streakDays').textContent = streak;
+            document.getElementById('remainingDays').textContent = remaining;
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressBar').textContent = percentage + '%';
+            
+            // Оновлення мотиваційного повідомлення
+            updateMotivation(completed);
+        }
+
+        function updateMotivation(completed) {
+            const motivationDiv = document.getElementById('motivation');
+            let message = motivationalMessages[0];
+            
+            // Знаходимо найближче повідомлення
+            const milestones = Object.keys(motivationalMessages).map(Number).sort((a, b) => a - b);
+            for (let milestone of milestones) {
+                if (completed >= milestone) {
+                    message = motivationalMessages[milestone];
+                }
+            }
+            
+            motivationDiv.innerHTML = `
+                <div class="motivation-icon">${message.icon}</div>
+                <div class="motivation-text">${message.text}</div>
+            `;
+        }
+
+        function resetChallenge() {
+            if (confirm('Ви впевнені, що хочете почати челендж заново? Весь прогрес та ачівки будуть втрачені.')) {
+                completedDays.clear();
+                unlockedAchievements.clear();
+                saveProgress();
+                initCalendar();
+            }
+        }
+
+        // Закриття модального вікна при кліку поза ним
+        document.getElementById('achievementModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeAchievementModal();
+            }
+        });
+
+        // Ініціалізація при завантаженні
+        loadProgress();
+        initCalendar();
+    </script>
+</body>
+</html>
